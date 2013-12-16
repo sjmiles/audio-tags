@@ -1,0 +1,48 @@
+﻿<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="audio-context.html">
+
+<polymer-element name="audio-tag">
+  <script>
+    Polymer('audio-tag', {
+      init: function(audioContext) {
+        console.log('[%s]: init(audioContext)', this.localName)
+        // input: splitter?
+        this.input = audioContext.createGain();
+        // output: gain
+        this.output = audioContext.createGain();
+      },
+      start: function(when) {
+        console.log('prototype start', when);
+      },
+      stop: function(when) {
+        console.log('prototype stop', when);
+      },
+      // Inspired by the visitor pattern... if classes overload initChild, that
+      // implementation will be executed instead of the normal behaviour
+      // (connecting each child output to our output) - see initChild
+      // This allows us to have different initialisations depending on the type of
+      // container node
+      initChildren: function(audioContext) {
+       this.children.array().forEach(function(child, index) {
+          this.initChild(audioContext, child, index);
+        }, this);
+      },
+      initChild: function(audioContext, child, index) {
+        if (child.init) {
+          child.init(audioContext);
+          child.output.connect(this.output);
+        } else {
+          console.log('no child init', child);
+        }
+      },
+      initAttributes: function(which) {
+        which.forEach(function(attr) {
+          var value = this.getAttribute(attr);
+          if(value !== null) {
+            self[attr] = value;
+          }
+        }, this);
+      }
+    });
+  </script>
+</polymer-element>

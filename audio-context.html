@@ -1,0 +1,26 @@
+﻿<link rel="import" href="../polymer/polymer.html">
+
+<script src="src/libs/AudioContextMonkeyPatch.js"></script>
+
+<polymer-element name="audio-context">
+  <script>
+    Polymer('audio-context', {
+      ready: function() {
+        this.context = new AudioContext();
+        this.async('init');
+      },
+      init: function() {
+        console.log('inserted audio context, now going through child nodes and seeing what we do with them');
+        var context = this.context;
+        this.children.array().forEach(function(child) {
+          if (child.init) {
+            child.init(context);
+            child.output.connect(context.destination);
+          } else {
+            console.log('no child init', child);
+          }
+        });
+      }
+    });
+  </script>
+</polymer-element>

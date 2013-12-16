@@ -1,0 +1,68 @@
+﻿<link rel="import" href="audio-tag.html">
+
+<polymer-element name="audio-vumeter" extends="audio-tag">
+  <template>
+    <canvas id="canvas" width="200" height="100"></canvas>
+  </template>
+  <script>
+    Polymer('audio-vumeter', {
+      canvasWidth: 200,
+      canvasHeight: 100,
+      animate: false,
+      ready: function() {
+        this.canvasContext = this.$.canvas.getContext('2d');
+        this.boundAnimation = this.animation.bind(this);
+      },
+      init: function(audioContext) {
+        this.super(arguments);
+
+        var analyser = audioContext.createAnalyser();
+        analyser.fftSize = 32;
+        analyser.smoothingTimeConstant = 0.5;
+
+        this.bufferLength = analyser.frequencyBinCount;
+        this.timeDomainArray = new Uint8Array(this.bufferLength);
+
+        this.input.connect(analyser);
+        analyser.connect(this.output);
+
+        this.analyser = analyser;
+        this.animate = true;
+      },
+      animateChanged: function() {
+        if (this.animate) {
+          this.animation();
+        }
+      },
+      animation: function() {
+        if (this.animate) {
+          requestAnimationFrame(this.boundAnimation);
+        }
+        this.analyser.getByteFrequencyData(this.timeDomainArray);
+
+        var ctx = this.canvasContext;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgb(0, 255, 0)';
+        ctx.fillStyle = 'rgb(255, 0, 0)';
+
+        var numSlices = this.bufferLength;
+        var inverseNumSlices = 1.0 / numSlices;
+
+        var sliceWidth = this.canvasWidth * inverseNumSlices;
+        var sliceStride = (this.bufferLength / numSlices) | 0;
+
+        var data = this.timeDomainArray;
+        var h = this.canvasHeight;
+        for(var i=0, x=0, v, y; i < numSlices; i += sliceStride) {
+          v = data[i] / 128.0;
+          y = v * h / 2;
+          ctx.fillRect(x, h - y, x + sliceWidth, y);
+          x += sliceWidth;
+        }
+      }
+    });
+  </script>
+</polymer-element>

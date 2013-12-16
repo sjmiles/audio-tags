@@ -1,0 +1,29 @@
+﻿<link rel="import" href="audio-tag.html">
+
+<polymer-element name="audio-chain" extends="audio-tag">
+  <script>
+    Polymer('audio-chain', {
+      init: function(audioContext) {
+        this.super(arguments);
+        this.initChildren(audioContext);
+      },
+      // Chains connect the nth-child to the nth-1 child (for n > 0)
+      // and the last child to our output
+      initChild: function(audioContext, child, index) {
+        console.log('[%s] initialising child [%d]', this.localName, index, child);
+        if (child.init) {
+          child.init(audioContext);
+        } else {
+          console.warn('[%s] child has no "init" method', this.localName);
+        }
+        if (index > 0) {
+          var prevChild = this.children[index - 1];
+          prevChild.output.connect(child.input);
+        }
+        if (index === this.children.length - 1) {
+          child.output.connect(this.output);
+        }
+      }
+    });
+  </script>
+</polymer-element>
