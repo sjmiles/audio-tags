@@ -1,6 +1,6 @@
 ﻿<link rel="import" href="audio-tag.html">
 
-<polymer-element name="audio-vumeter" extends="audio-tag" attributes="animate">
+<polymer-element name="audio-vumeter" extends="audio-tag" attributes="animating">
   <template>
     <style>
       :host {
@@ -14,41 +14,37 @@
     Polymer('audio-vumeter', {
       canvasWidth: 200,
       canvasHeight: 100,
-      animate: false,
+      animating: false,
       ready: function() {
         this.canvasContext = this.$.canvas.getContext('2d');
         this.boundAnimation = this.animation.bind(this);
       },
       init: function(audioContext) {
         this.super(arguments);
-
-        var analyser = audioContext.createAnalyser();
-        analyser.fftSize = 32;
-        analyser.smoothingTimeConstant = 0.5;
-
-        this.bufferLength = analyser.frequencyBinCount;
+        this.analyser = audioContext.createAnalyser();
+        this.analyser.fftSize = 32;
+        this.analyser.smoothingTimeConstant = 0.5;
+        this.bufferLength = this.analyser.frequencyBinCount;
         this.timeDomainArray = new Uint8Array(this.bufferLength);
-
-        this.input.connect(analyser);
-        analyser.connect(this.output);
-
-        this.analyser = analyser;
-        this.animate = true;
+        this.input.connect(this.analyser);
+        this.analyser.connect(this.output);
+        this.animation();
       },
-      animateChanged: function() {
-        if (this.animate) {
+      animatingChanged: function() {
+        if (this.animating) {
           this.animation();
         }
       },
       animation: function() {
-        if (this.animate) {
-          requestAnimationFrame(this.boundAnimation);
+        var ctx = this.canvasContext;
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+        if (!this.analyser) {
+          return;
         }
         this.analyser.getByteFrequencyData(this.timeDomainArray);
-
-        var ctx = this.canvasContext;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
         ctx.lineWidth = 1;
         ctx.strokeStyle = 'rgb(0, 255, 0)';
@@ -68,8 +64,11 @@
           ctx.fillRect(x, h - y, x + sliceWidth, y);
           x += sliceWidth;
         }
-
         ctx.stroke();
+
+        if (this.animating) {
+          requestAnimationFrame(this.boundAnimation);
+        }
       }
     });
   </script>
