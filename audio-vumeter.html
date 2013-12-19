@@ -1,7 +1,13 @@
 ﻿<link rel="import" href="audio-tag.html">
 
-<polymer-element name="audio-vumeter" extends="audio-tag">
+<polymer-element name="audio-vumeter" extends="audio-tag" attributes="animate">
   <template>
+    <style>
+      :host {
+        display: inline-block;
+        vertical-align: middle;
+      }
+    </style>
     <canvas id="canvas" width="200" height="100"></canvas>
   </template>
   <script>
@@ -62,6 +68,8 @@
           ctx.fillRect(x, h - y, x + sliceWidth, y);
           x += sliceWidth;
         }
+
+        ctx.stroke();
       }
     });
   </script>

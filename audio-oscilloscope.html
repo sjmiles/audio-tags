@@ -1,6 +1,6 @@
 ﻿<link rel="import" href="audio-tag.html">
 
-<polymer-element name="audio-oscilloscope" extends="audio-tag">
+<polymer-element name="audio-oscilloscope" extends="audio-tag" attributes="animating">
   <template>
     <style>
       :host {
@@ -14,7 +14,7 @@
     Polymer('audio-oscilloscope', {
       canvasWidth: 200,
       canvasHeight: 100,
-      animate: false,
+      animating: false,
       ready: function() {
         this.canvasContext = this.$.canvas.getContext('2d');
         this.boundAnimation = this.animation.bind(this);
@@ -35,17 +35,17 @@
 
         this.animate = true;
       },
-      animateChanged: function() {
-        if (this.animate) {
+      animatingChanged: function() {
+        if (this.animating) {
           this.animation();
         }
       },
       animation: function() {
-        if (this.animate) {
+        if (this.animating) {
           requestAnimationFrame(this.boundAnimation);
         }
 
-        this.analyser.getByteFrequencyData(this.timeDomainArray);
+        this.analyser.getByteTimeDomainData(this.timeDomainArray);
 
         var ctx = this.canvasContext;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
@@ -61,17 +61,19 @@
 
         var sliceWidth = this.canvasWidth / numSlices;
         var data = this.timeDomainArray;
-        var h2 = this.canvasHeight/2;
+        var h = this.canvasHeight, h2 = h/2;
 
         for(var i=0, x=0, v, y; i < this.bufferLength; i++, x += sliceWidth) {
-          v = data[i] / 128.0;
-          y = v * h2;
+          v = (data[i] - 128) / 128 * 2;
+          y = v*h + h2;
           if (i === 0) {
             ctx.moveTo(x, y);
           } else {
             ctx.lineTo(x, y);
           }
         }
+
+        ctx.stroke();
       }
     });
   </script>
