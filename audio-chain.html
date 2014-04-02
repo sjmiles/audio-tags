@@ -10,7 +10,7 @@
       // Chains connect the nth-child to the nth-1 child (for n > 0)
       // and the last child to our output
       initChild: function(audioContext, child, index) {
-        console.log('[%s] initialising child [%d]', this.localName, index, child);
+        //console.log('[%s] initialising child [%d]', this.localName, index, child);
         if (child.init) {
           child.init(audioContext);
         } else {

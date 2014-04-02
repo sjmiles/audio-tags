@@ -1,10 +1,11 @@
 ﻿<link rel="import" href="audio-tag.html">
 
-<script src="src/js/audioComponents/OscillatorVoice.js"></script>
-<script src="node_modules/midiutils/src/MIDIUtils.js"></script>
+<script src="lib/OscillatorVoice.js"></script>
+<script src="../midiutils/src/MIDIUtils.js"></script>
 
 <polymer-element name="audio-oscillator" extends="audio-tag" attributes="frequency type gain playing ui">
   <template>
+
     <template if="{{ui}}">
       OSCILLATOR<br />
       <label><input type="checkbox" checked="{{playing}}"> Playing</label><br>
@@ -18,15 +19,19 @@
       <label class="frequency"><input type="range" min="1" max="12000" step="0.5" value="{{frequency}}"><span></span> Hz</label><br />
       <label class="note"><span></span></label>
     </template>
+
   </template>
   <script>
+
     Polymer('audio-oscillator', {
+
       playing: false,
       frequency: 220,
       type: 'sine',
       ui: false,
       gain: 0.2,
       oscillator: {},
+
       init: function(audioContext) {
         this.super(arguments);
         this.oscillator = new OscillatorVoice(audioContext);
@@ -36,26 +41,34 @@
         this.gainChanged();
         this.playingChanged();
       },
+
       frequencyChanged: function() {
         this.oscillator.frequency = this.frequency;
       },
+
       typeChanged: function() {
         this.oscillator.type = this.type;
       },
+
       gainChanged: function() {
         this.oscillator.gain = this.gain;
       },
+
       playingChanged: function() {
         if (this.oscillator.start) {
           this[this.playing ? 'start' : 'stop'](0);
         }
       },
+
       start: function(when) {
         this.oscillator.start(when);
       },
+
       stop: function(when) {
         this.oscillator.stop(when);
       }
+
     });
+
   </script>
 </polymer-element>

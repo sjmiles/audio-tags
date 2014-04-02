@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "tween.js": "~0.11.0",
-    "midiutils": "0.0.2"
-  }
-}

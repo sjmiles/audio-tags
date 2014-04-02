@@ -1,0 +1,8 @@
+{
+  "name": "audio-tags",
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#master",
+    "midiutils": "sole/midiutils#master"
+  }
+}

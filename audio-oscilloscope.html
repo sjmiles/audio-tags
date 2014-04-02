@@ -2,23 +2,29 @@
 
 <polymer-element name="audio-oscilloscope" extends="audio-tag" attributes="animating">
   <template>
+
     <style>
       :host {
         display: inline-block;
         vertical-align: middle;
       }
     </style>
+
     <canvas id="canvas" width="200" height="100"></canvas>
+
   </template>
   <script>
+
     Polymer('audio-oscilloscope', {
       canvasWidth: 200,
       canvasHeight: 100,
       animating: false,
+
       ready: function() {
         this.canvasContext = this.$.canvas.getContext('2d');
         this.boundAnimation = this.animation.bind(this);
       },
+
       init: function(audioContext) {
         this.super(arguments);
         this.analyser = audioContext.createAnalyser();
@@ -28,11 +34,13 @@
         this.analyser.connect(this.output);
         this.animation();
       },
+
       animatingChanged: function() {
         if (this.animating) {
           this.animation();
         }
       },
+
       animation: function() {
         var ctx = this.canvasContext;
 
@@ -42,6 +50,7 @@
         if (!this.analyser) {
           return;
         }
+
         this.analyser.getByteTimeDomainData(this.timeDomainArray);
 
         var numSlices = this.bufferLength;
@@ -73,5 +82,6 @@
         }
       }
     });
+
   </script>
 </polymer-element>

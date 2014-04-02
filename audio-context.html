@@ -1,6 +1,6 @@
 ﻿<link rel="import" href="../polymer/polymer.html">
 
-<script src="src/libs/AudioContextMonkeyPatch.js"></script>
+<script src="lib/AudioContextMonkeyPatch.js"></script>
 
 <polymer-element name="audio-context">
   <script>
@@ -10,7 +10,7 @@
         this.async('init');
       },
       init: function() {
-        console.log('inserted audio context, now going through child nodes and seeing what we do with them');
+        //console.log('inserted audio context, now going through child nodes and seeing what we do with them');
         var context = this.context;
         this.children.array().forEach(function(child) {
           if (child.init) {
