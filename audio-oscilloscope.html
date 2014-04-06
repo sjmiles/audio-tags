@@ -1,5 +1,21 @@
 ﻿<link rel="import" href="audio-tag.html">
 
+<!--
+An oscilloscope, displays animated Time Domain Data from an audio chain.
+
+    <audio-context>
+      <audio-chain>
+        <audio-oscillator frequency="220"></audio-oscillator>
+        <audio-oscilloscope animating></audio-oscillator>
+      </audio-chain>
+    </audio-context>
+
+@group audio-tags
+@class audio-oscilloscope
+@blurb Displays animated Time Domain Data from an audio chain.
+@status alpha
+@url github.io
+-->
 <polymer-element name="audio-oscilloscope" extends="audio-tag" attributes="animating">
   <template>
 
@@ -18,6 +34,13 @@
     Polymer('audio-oscilloscope', {
       canvasWidth: 200,
       canvasHeight: 100,
+
+      /**
+       * True to enable live data display, false to stop displaying data.
+       *
+       * @attribute animating
+       * @type string
+       */
       animating: false,
 
       ready: function() {
